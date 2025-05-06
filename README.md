@@ -1,8 +1,4 @@
-# Vou criar um arquivo README.md com o conteúdo solicitado, incluindo ícones para Java e MySQL via badges (por exemplo, shields.io).
-# O arquivo será salvo em '/mnt/data/README.md' para download.
-
-readme_content = """
-# 🎉 **Projeto Semestral - Quiz Interativo (Inspirado no Kahoot)**
+# **Projeto Semestral - Quiz Interativo (Inspirado no Kahoot)**
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
@@ -73,3 +69,4 @@ Nosso foco é desenvolver um sistema **multiplayer, simples e interativo**, apro
 
 ```bash
 git clone https://github.com/seu-usuario/nome-do-repositorio.git
+```
