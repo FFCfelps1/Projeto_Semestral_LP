@@ -59,8 +59,6 @@ Nosso foco é desenvolver um sistema **multiplayer, simples e interativo**, apro
 | `alternativas` | id_alternativa, texto, correta, id_pergunta |
 | `respostas`    | id_resposta, id_aluno, id_pergunta, id_alternativa, tempo_resposta |
 
-*(Diagrama completo será adicionado na pasta `/docs`)*
-
 ---
 
 ## 💻 **Como Executar**
@@ -70,3 +68,26 @@ Nosso foco é desenvolver um sistema **multiplayer, simples e interativo**, apro
 ```bash
 git clone https://github.com/seu-usuario/nome-do-repositorio.git
 ```
+
+📚 Diretórios do Projeto
+
+```bash
+Copiar
+/src               → Código-fonte Java
+/database          → Scripts SQL e diagramas do banco
+/docs              → Documentação adicional (diagramas, PDF, slides)
+/lib               → Dependências externas (JARs)
+/README.md         → Este arquivo
+```
+
+👥 Equipe
+
+- Felipe Fazio da Costa
+
+- Ruth Ramos Romeu
+
+- Matheus Antônio da Luz Cardoso
+
+- Fernando Godoi Grinevicius
+
+- Jhonas
