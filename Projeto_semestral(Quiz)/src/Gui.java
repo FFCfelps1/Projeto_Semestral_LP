@@ -44,6 +44,8 @@ public class Gui extends JFrame {
 
         if (currentQuestionIndex >= questions.size()) {
             JOptionPane.showMessageDialog(this, "Parabéns! Você terminou o quiz.");
+            JOptionPane.showMessageDialog(this, "Resposta corretas: " + currentQuestionIndex);
+            System.exit(0);
             return;
         }
 
@@ -64,6 +66,7 @@ public class Gui extends JFrame {
                 System.out.println("Opção selecionada: " + answer);
                 if (q.isCorrect(answer)) {
                     currentQuestionIndex++;
+                    JOptionPane.showMessageDialog(this, "Resposta correta!");
                     showNextQuestion();
                 } else {
                     JOptionPane.showMessageDialog(this, "Resposta incorreta. Tente novamente.");
@@ -73,6 +76,8 @@ public class Gui extends JFrame {
             questionPanel.add(btn);
         }
 
+
+    
         questionPanel.revalidate();
         questionPanel.repaint();
     }
