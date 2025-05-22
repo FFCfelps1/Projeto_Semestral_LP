@@ -43,8 +43,7 @@ public class Gui extends JFrame {
         questionPanel.removeAll();
 
         if (currentQuestionIndex >= questions.size()) {
-            JOptionPane.showMessageDialog(this, "Parabéns! Você terminou o quiz.");
-            JOptionPane.showMessageDialog(this, "Resposta corretas: " + currentQuestionIndex);
+            JOptionPane.showMessageDialog(this, "Parabéns! Você terminou o quiz." + "\nResposta corretas: " + currentQuestionIndex);
             System.exit(0);
             return;
         }
