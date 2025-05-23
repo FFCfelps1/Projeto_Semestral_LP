@@ -2,7 +2,7 @@ import java.awt.*;
 import java.util.List;
 import javax.swing.*;
 
-public class Gui extends JFrame {
+public class GuiQuestions extends JFrame {
     private CardLayout cardLayout;
     private JPanel mainPanel;
     private JPanel quizPanel;
@@ -11,7 +11,7 @@ public class Gui extends JFrame {
     private List<Question> questions;
     private int currentQuestionIndex = 0;
 
-    public Gui(List<Question> questions) {
+    public GuiQuestions(List<Question> questions) {
         this.questions = questions;
 
         setTitle("Quiz App");

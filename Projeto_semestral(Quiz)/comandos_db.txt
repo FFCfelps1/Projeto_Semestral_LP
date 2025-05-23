@@ -1,0 +1,38 @@
+-- Criação do Banco de Dados
+CREATE DATABASE IF NOT EXISTS quizdb;
+USE quizdb;
+
+DROP TABLE users;
+CREATE TABLE users (
+    name VARCHAR(255) PRIMARY KEY,
+    score INT DEFAULT 0
+);
+
+DROP TABLE IF EXISTS questions;
+
+CREATE TABLE questions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question VARCHAR(255) NOT NULL,
+    optionA VARCHAR(100) NOT NULL,
+    optionB VARCHAR(100) NOT NULL,
+    optionC VARCHAR(100) NOT NULL,
+    optionD VARCHAR(100) NOT NULL,
+    correctOption INT NOT NULL
+);
+
+INSERT INTO questions (question, optionA, optionB, optionC, optionD, correctOption) VALUES
+('Qual é a capital da França?', 'Paris', 'Londres', 'Roma', 'Berlim', 0),
+('Qual é o maior planeta do sistema solar?', 'Terra', 'Marte', 'Júpiter', 'Saturno', 2),
+('Quem escreveu "Dom Quixote"?', 'Machado de Assis', 'Miguel de Cervantes', 'José de Alencar', 'Eça de Queirós', 1),
+('Qual é o elemento químico representado pelo símbolo "O"?', 'Ouro', 'Oxigênio', 'Ozônio', 'Osmium', 1),
+('Quem pintou a Mona Lisa?', 'Vincent van Gogh', 'Michelangelo', 'Leonardo da Vinci', 'Pablo Picasso', 2),
+('Em que ano o homem pisou na Lua pela primeira vez?', '1965', '1969', '1972', '1980', 1),
+('Qual é o animal terrestre mais rápido do mundo?', 'Leopardo', 'Guepardo', 'Tigre', 'Cavalo', 1),
+('Qual é o menor país do mundo?', 'Mônaco', 'Malta', 'Vaticano', 'Liechtenstein', 2),
+('Qual linguagem é usada para desenvolver aplicativos Android nativos?', 'Java', 'Python', 'Swift', 'Kotlin', 0),
+('Quem desenvolveu a Teoria da Relatividade?', 'Isaac Newton', 'Nikola Tesla', 'Albert Einstein', 'Stephen Hawking', 2);
+
+
+select * from questions;
+select * from users;
+DESCRIBE questions;
