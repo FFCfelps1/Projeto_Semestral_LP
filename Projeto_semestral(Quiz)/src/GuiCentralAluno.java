@@ -98,7 +98,7 @@ public class GuiCentralAluno extends JFrame {
     }
 
     public static void main(String[] args) {
-        User user = new User("Aluno Teste"); // Exemplo de usuário
+        User user = new User("Aluno Teste", "1234"); // Exemplo de usuário
         new GuiCentralAluno(user);
     }
 }
