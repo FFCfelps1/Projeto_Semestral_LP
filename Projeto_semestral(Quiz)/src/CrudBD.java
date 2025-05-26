@@ -50,7 +50,7 @@ public class CrudBD {
     }
 
     // Método para recuperar um usuário do banco de dados
-    public static User getUser(String name) {
+    public static User getUser(String name, String senha) {
         String sql = "SELECT * FROM users WHERE name = ? AND senha = ?";
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
