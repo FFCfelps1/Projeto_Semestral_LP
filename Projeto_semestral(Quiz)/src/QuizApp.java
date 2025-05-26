@@ -31,3 +31,4 @@ public class QuizApp {
         new GuiCentralAluno(user); // Abre a central do aluno
     }
 }
+//Fim da sessão de códigos usando MySQL
