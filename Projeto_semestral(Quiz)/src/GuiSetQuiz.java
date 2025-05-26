@@ -1,10 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GuiSetQuiz extends JFrame {
+    private JTextField quizNameField;
     private JList<String> questionList;
     private DefaultListModel<String> questionListModel;
     private JButton saveQuizButton;
@@ -13,12 +13,19 @@ public class GuiSetQuiz extends JFrame {
 
     public GuiSetQuiz() {
         setTitle("Configurar Quiz");
-        setSize(500, 400);
+        setSize(500, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
         // Painel principal
         JPanel mainPanel = new JPanel(new BorderLayout());
+
+        // Campo para o nome do quiz
+        JPanel topPanel = new JPanel(new BorderLayout());
+        JLabel quizNameLabel = new JLabel("Nome do Quiz:");
+        quizNameField = new JTextField();
+        topPanel.add(quizNameLabel, BorderLayout.WEST);
+        topPanel.add(quizNameField, BorderLayout.CENTER);
 
         // Lista de perguntas
         questionListModel = new DefaultListModel<>();
@@ -29,6 +36,7 @@ public class GuiSetQuiz extends JFrame {
         // Botão de salvar
         saveQuizButton = new JButton("Salvar Quiz");
 
+        mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(saveQuizButton, BorderLayout.SOUTH);
 
@@ -52,6 +60,12 @@ public class GuiSetQuiz extends JFrame {
     }
 
     private void saveQuiz() {
+        String quizName = quizNameField.getText().trim();
+        if (quizName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, insira um nome para o quiz.");
+            return;
+        }
+
         int[] selectedIndices = questionList.getSelectedIndices();
         if (selectedIndices.length == 0) {
             JOptionPane.showMessageDialog(this, "Por favor, selecione pelo menos uma pergunta para o quiz.");
@@ -64,8 +78,8 @@ public class GuiSetQuiz extends JFrame {
         }
 
         // Salva o quiz no banco de dados
-        CrudBD.saveQuiz(selectedQuestions);
-        JOptionPane.showMessageDialog(this, "Quiz salvo com sucesso!");
+        CrudBD.saveQuiz(quizName, selectedQuestions);
+        JOptionPane.showMessageDialog(this, "Quiz '" + quizName + "' salvo com sucesso!");
         dispose();
     }
 }

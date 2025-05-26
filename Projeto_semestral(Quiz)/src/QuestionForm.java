@@ -32,7 +32,7 @@ public class QuestionForm extends JDialog {
 
         // Campo para a resposta correta
         mainPanel.add(new JLabel("Resposta Correta (1-4):"));
-        correctAnswerBox = new JComboBox<>(new Integer[]{1, 2, 3, 4});
+        correctAnswerBox = new JComboBox<>(new Integer[]{0, 1, 2, 3});
         mainPanel.add(correctAnswerBox);
 
         // Botões

@@ -120,16 +120,30 @@ public class CrudBD {
         }
     }
 
-    public static void saveQuiz(List<Question> questions) {
-        String sql = "INSERT INTO quizzes (question_id) VALUES (?)";
+    public static void saveQuiz(String quizName, List<Question> questions) {
+        String insertQuizSql = "INSERT INTO quizzes (name) VALUES (?)";
+        String insertQuestionSql = "INSERT INTO quiz_questions (quiz_id, question_id) VALUES (?, ?)";
     
         try (Connection conn = ConnFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement quizStmt = conn.prepareStatement(insertQuizSql, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement questionStmt = conn.prepareStatement(insertQuestionSql)) {
     
-            for (Question question : questions) {
-                stmt.setInt(1, question.getId()); // Supondo que cada pergunta tenha um ID único
-                stmt.executeUpdate();
+            // Insere o quiz e recupera o ID gerado
+            quizStmt.setString(1, quizName);
+            quizStmt.executeUpdate();
+            ResultSet rs = quizStmt.getGeneratedKeys();
+            if (!rs.next()) {
+                throw new SQLException("Falha ao criar o quiz.");
             }
+            int quizId = rs.getInt(1);
+    
+            // Insere as perguntas associadas ao quiz
+            for (Question question : questions) {
+                questionStmt.setInt(1, quizId);
+                questionStmt.setInt(2, question.getId());
+                questionStmt.addBatch();
+            }
+            questionStmt.executeBatch();
     
         } catch (SQLException e) {
             e.printStackTrace();
@@ -234,10 +248,9 @@ public class CrudBD {
     public static List<Question> getQuizQuestions(int quizId) {
         List<Question> questions = new ArrayList<>();
         String sql = "SELECT q.id, q.question, q.optionA, q.optionB, q.optionC, q.optionD, q.correctOption " +
-                     "FROM quiz_sequence qs " +
-                     "JOIN questions q ON qs.question_id = q.id " +
-                     "WHERE qs.quiz_id = ? " +
-                     "ORDER BY qs.question_order";
+                     "FROM quiz_questions qq " +
+                     "JOIN questions q ON qq.question_id = q.id " +
+                     "WHERE qq.quiz_id = ?";
     
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -280,5 +293,26 @@ public class CrudBD {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static List<String[]> getAllQuizzes() {
+        List<String[]> quizzes = new ArrayList<>();
+        String sql = "SELECT id, name FROM quizzes";
+    
+        try (Connection conn = ConnFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+    
+            while (rs.next()) {
+                String id = String.valueOf(rs.getInt("id"));
+                String name = rs.getString("name");
+                quizzes.add(new String[]{id, name});
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return quizzes;
     }
 }

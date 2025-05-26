@@ -49,12 +49,42 @@ public class GuiCentralAluno extends JFrame {
     }
 
     private void playProfessorQuiz() {
-        int quizId = 1; // Supondo que o ID do quiz configurado pelo professor seja 1
-        List<Question> questions = CrudBD.getQuizQuestions(quizId); // Busca as perguntas do quiz configurado
-        if (questions.isEmpty()) {
+        List<String[]> quizzes = CrudBD.getAllQuizzes(); // Recupera todos os quizzes disponíveis
+        if (quizzes.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nenhum quiz configurado pelo professor no momento.");
             return;
         }
+    
+        // Exibe uma lista de quizzes para o aluno escolher
+        String[] quizNames = quizzes.stream().map(q -> q[1]).toArray(String[]::new);
+        String selectedQuiz = (String) JOptionPane.showInputDialog(
+                this,
+                "Selecione um quiz para jogar:",
+                "Quizzes Disponíveis",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                quizNames,
+                quizNames[0]
+        );
+    
+        if (selectedQuiz == null) {
+            return; // O aluno cancelou a seleção
+        }
+    
+        // Recupera o ID do quiz selecionado
+        int quizId = Integer.parseInt(quizzes.stream()
+                .filter(q -> q[1].equals(selectedQuiz))
+                .findFirst()
+                .get()[0]);
+    
+        // Busca as perguntas do quiz selecionado
+        List<Question> questions = CrudBD.getQuizQuestions(quizId);
+        if (questions.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "O quiz selecionado não possui perguntas.");
+            return;
+        }
+    
+        // Inicia o quiz
         new GuiQuestions(questions, user); // Abre a interface do quiz com as perguntas
     }
 
