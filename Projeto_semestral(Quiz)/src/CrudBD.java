@@ -32,14 +32,16 @@ public class CrudBD {
     }
 
     // Método para salvar o usuário no banco de dados
-    public static void saveUser(User user) {
-        String sql = "INSERT INTO users (name, score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = ?";
+    public static void saveUser(User user, String senha) {
+       String sql = "INSERT INTO users (name, senha, score) VALUES (?, ?, ?)" + 
+                     " ON DUPLICATE KEY UPDATE score = ?";
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, user.getName());
             stmt.setInt(2, user.getScore());
-            stmt.setInt(3, user.getScore());
+            stmt.setString(3, senha);
+            stmt.setInt(4, user.getScore());
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -49,15 +51,16 @@ public class CrudBD {
 
     // Método para recuperar um usuário do banco de dados
     public static User getUser(String name) {
-        String sql = "SELECT * FROM users WHERE name = ?";
+        String sql = "SELECT * FROM users WHERE name = ? AND senha = ?";
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, name);
+            stmt.setString(2, senha);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                User user = new User(rs.getString("name"));
+                User user = new User(rs.getString("name"), rs.getString("senha"));
                 user.addScore(rs.getInt("score"));
                 return user;
             }
