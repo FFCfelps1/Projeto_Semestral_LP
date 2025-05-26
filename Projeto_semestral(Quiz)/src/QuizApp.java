@@ -32,3 +32,4 @@ public class QuizApp {
     }
 }
 //Fim da sessão de códigos usando MySQL
+// Mano calvo
