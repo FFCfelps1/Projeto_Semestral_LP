@@ -5,6 +5,7 @@ USE quizdb;
 DROP TABLE users;
 CREATE TABLE users (
     name VARCHAR(255) PRIMARY KEY,
+    senha VARCHAR(15) NOT NULL, 
     score INT DEFAULT 0
 );
 
