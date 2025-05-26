@@ -4,6 +4,7 @@ public class QuizApp {
         // Exibe a tela de login
         GuiUser guiUser = new GuiUser(null);
         String userName = guiUser.getUserName();
+        String senha = guiUser.getSenha();
         boolean isTeacher = guiUser.isTeacher();
 
         if (userName == null || userName.isEmpty()) {
@@ -12,10 +13,10 @@ public class QuizApp {
         }
 
         // Recupera ou cria o usuário no banco de dados
-        User user = CrudBD.getUser(userName);
+        User user = CrudBD.getUser(userName, senha);
         if (user == null) {
-            user = new User(userName);
-            CrudBD.saveUser(user); // Salva o novo usuário no banco de dados
+            user = new User(userName, senha);
+            CrudBD.saveUser(user, senha); // Salva o novo usuário no banco de dados
         }
 
         // Fluxo para professores
