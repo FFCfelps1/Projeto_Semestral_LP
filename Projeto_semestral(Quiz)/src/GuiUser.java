@@ -8,10 +8,12 @@ public class GuiUser extends JDialog {
     private JRadioButton studentButton;
     private JRadioButton teacherButton;
     private JTextField codeField;
+    private JPasswordField passwordField; 
     private JButton loginButton;
 
     private static final String TEACHER_CODE = "20comer70correr"; // Código de confirmação para professores
     private String userName;
+    private String senha;
     private boolean isTeacher;
 
     public GuiUser(Frame parent) {
@@ -21,11 +23,15 @@ public class GuiUser extends JDialog {
 
         // Painel principal
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(6, 1));
+        mainPanel.setLayout(new GridLayout(7, 1));
 
         // Campo de nome
         JLabel nameLabel = new JLabel("Digite seu nome:");
         nameField = new JTextField();
+
+        // Campo da senha
+        JLabel passwordLabel = new JLabel("Digite sua senha:");
+        passwordField = new JPasswordField(); 
 
         // Botões de seleção (Aluno ou Professor)
         studentButton = new JRadioButton("Aluno");
@@ -61,8 +67,10 @@ public class GuiUser extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String name = nameField.getText().trim();
-                if (name.isEmpty()) {
-                    JOptionPane.showMessageDialog(GuiUser.this, "Por favor, insira seu nome.");
+                String senhaInput = new String(passwordField.getPassword()).trim();
+
+                if (name.isEmpty() || senhaInput.isEmpty()) {
+                    JOptionPane.showMessageDialog(GuiUser.this, "Por favor, insira nome e senha.");
                     return;
                 }
 
@@ -79,8 +87,9 @@ public class GuiUser extends JDialog {
                     JOptionPane.showMessageDialog(GuiUser.this, "Por favor, selecione se você é Aluno ou Professor.");
                     return;
                 }
-
+                
                 userName = name;
+                senha = senhaInput;
                 dispose(); // Fecha a janela de login
             }
         });
@@ -91,7 +100,9 @@ public class GuiUser extends JDialog {
     public String getUserName() {
         return userName;
     }
-
+    public String getSenha() {
+        return senha;
+    }
     public boolean isTeacher() {
         return isTeacher;
     }
