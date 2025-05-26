@@ -29,9 +29,8 @@ public class GuiUser extends JDialog {
         JLabel nameLabel = new JLabel("Digite seu nome:");
         nameField = new JTextField();
 
-        // Campo da senha
-        JLabel passwordLabel = new JLabel("Digite sua senha:");
-        passwordField = new JPasswordField(); 
+        JLabel passwordLabel = new JLabel("Digite sua senha:"); // Label senha
+        passwordField = new JPasswordField(); // Campo senha
 
         // Botões de seleção (Aluno ou Professor)
         studentButton = new JRadioButton("Aluno");
@@ -48,9 +47,12 @@ public class GuiUser extends JDialog {
         // Botão de login
         loginButton = new JButton("Entrar");
 
+
         // Adiciona componentes ao painel principal
         mainPanel.add(nameLabel);
         mainPanel.add(nameField);
+        mainPanel.add(passwordLabel);
+        mainPanel.add(passwordField);
         mainPanel.add(studentButton);
         mainPanel.add(teacherButton);
         mainPanel.add(codeLabel);
@@ -65,7 +67,7 @@ public class GuiUser extends JDialog {
 
         loginButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+           public void actionPerformed(ActionEvent e) {
                 String name = nameField.getText().trim();
                 String senhaInput = new String(passwordField.getPassword()).trim();
 
@@ -87,10 +89,10 @@ public class GuiUser extends JDialog {
                     JOptionPane.showMessageDialog(GuiUser.this, "Por favor, selecione se você é Aluno ou Professor.");
                     return;
                 }
-                
+
                 userName = name;
                 senha = senhaInput;
-                dispose(); // Fecha a janela de login
+                dispose();
             }
         });
 
