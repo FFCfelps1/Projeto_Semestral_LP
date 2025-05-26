@@ -6,6 +6,7 @@ public class User {
   public User(String name, String senha) {
       this.name = name;
       this.senha = senha;
+      // Inicializa a pontuação do usuário
       this.score = 0;
   }
 
@@ -21,6 +22,7 @@ public class User {
   public int getScore() {
       return score;
   }
+
   public void addScore(int points) {
       this.score += points;
   }

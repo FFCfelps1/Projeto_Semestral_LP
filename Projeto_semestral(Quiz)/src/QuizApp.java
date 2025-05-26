@@ -42,6 +42,3 @@ public class QuizApp {
         new GuiCentralAluno(user);
     }
 }
-
-// Fim da sessão de códigos usando MySQL
-// Mano calvo
