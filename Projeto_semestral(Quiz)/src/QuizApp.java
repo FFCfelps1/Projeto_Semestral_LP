@@ -1,4 +1,3 @@
-import java.util.List;
 
 public class QuizApp {
     public static void main(String[] args) {
@@ -19,24 +18,15 @@ public class QuizApp {
             CrudBD.saveUser(user); // Salva o novo usuário no banco de dados
         }
 
+        // Fluxo para professores
         if (isTeacher) {
             System.out.println("Bem-vindo, Professor " + user.getName() + "!");
-            new GuiEditQuestions(); // Abre a interface de edição de perguntas para professores
-        } else {
-            System.out.println("Bem-vindo, Aluno " + user.getName() + "!");
-            List<Question> questions = CrudBD.getQuestions();
-
-            // Limita a lista de perguntas a no máximo 10
-            if (questions.size() > 10) {
-                questions = questions.subList(0, 10);
-            }
-
-            // Cada rodada de pergunta deve ter no máximo 10 perguntas
-            if (!questions.isEmpty()) {
-                new GuiQuestions(questions); // Passa a lista de perguntas para o construtor de GuiQuestions
-            } else {
-                System.out.println("Nenhuma pergunta encontrada no banco de dados.");
-            }
+            new GuiCentralProfessor(); // Abre a central do professor
+            return; // Encerra o fluxo principal após abrir a central do professor
         }
+
+        // Fluxo para alunos
+        System.out.println("Bem-vindo, Aluno " + user.getName() + "!");
+        new GuiCentralAluno(user); // Abre a central do aluno
     }
 }

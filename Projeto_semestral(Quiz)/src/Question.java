@@ -1,4 +1,5 @@
 public class Question {
+  private int id; // ID da pergunta no banco de dados
   private String question;
   private String[] options;
   private int correctAnswer;
@@ -7,6 +8,18 @@ public class Question {
       this.question = question;
       this.options = options;
       this.correctAnswer = correctAnswer;
+  }
+
+  // Construtor adicional para incluir o ID
+  public Question(int id, String question, String[] options, int correctAnswer) {
+      this.id = id;
+      this.question = question;
+      this.options = options;
+      this.correctAnswer = correctAnswer;
+  }
+
+  public int getId() {
+      return id;
   }
 
   public String getQuestion() {
@@ -22,8 +35,6 @@ public class Question {
   }
 
   public boolean isCorrect(int answer) {
-    System.out.println("Resposta fornecida: " + answer);
-    System.out.println("Resposta correta: " + correctAnswer);
-    return answer == correctAnswer;
+      return answer == correctAnswer;
   }
 }

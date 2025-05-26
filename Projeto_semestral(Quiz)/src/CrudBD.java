@@ -7,12 +7,13 @@ public class CrudBD {
     public static List<Question> getQuestions() {
         List<Question> questions = new ArrayList<>();
         String sql = "SELECT * FROM questions";
-
+    
         try (Connection conn = ConnFactory.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-
+    
             while (rs.next()) {
+                int id = rs.getInt("id"); // Recupera o ID da pergunta
                 String questionText = rs.getString("question");
                 String[] options = {
                     rs.getString("optionA"),
@@ -21,14 +22,15 @@ public class CrudBD {
                     rs.getString("optionD")
                 };
                 int correctOption = rs.getInt("correctOption");
-
-                questions.add(new Question(questionText, options, correctOption));
+    
+                questions.add(new Question(id, questionText, options, correctOption));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return questions;
     }
+
     // Método para salvar o usuário no banco de dados
     public static void saveUser(User user) {
         String sql = "INSERT INTO users (name, score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = ?";
@@ -116,5 +118,151 @@ public class CrudBD {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void saveQuiz(List<Question> questions) {
+        String sql = "INSERT INTO quizzes (question_id) VALUES (?)";
+    
+        try (Connection conn = ConnFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            for (Question question : questions) {
+                stmt.setInt(1, question.getId()); // Supondo que cada pergunta tenha um ID único
+                stmt.executeUpdate();
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Método Get ID
+    public static int getId(String questionText) {
+        String sql = "SELECT id FROM questions WHERE question = ?";
+        try (Connection conn = ConnFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            stmt.setString(1, questionText);
+            ResultSet rs = stmt.executeQuery();
+    
+            if (rs.next()) {
+                return rs.getInt("id"); // Retorna o ID da pergunta
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Retorna -1 se a pergunta não for encontrada
+    }
+
+    public static List<String[]> getResults() {
+        List<String[]> results = new ArrayList<>();
+        String sql = "SELECT student_name, quiz_name, score FROM results";
+    
+        try (Connection conn = ConnFactory.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+    
+            while (rs.next()) {
+                String studentName = rs.getString("student_name");
+                String quizName = rs.getString("quiz_name");
+                String score = rs.getString("score");
+                results.add(new String[]{studentName, quizName, score});
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return results;
+    }
+
+    public static List<Question> getRandomQuestions(int limit) {
+        List<Question> questions = new ArrayList<>();
+        String sql = "SELECT * FROM questions ORDER BY RAND() LIMIT ?";
+    
+        try (Connection conn = ConnFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            stmt.setInt(1, limit);
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String questionText = rs.getString("question");
+                String[] options = {
+                    rs.getString("optionA"),
+                    rs.getString("optionB"),
+                    rs.getString("optionC"),
+                    rs.getString("optionD")
+                };
+                int correctOption = rs.getInt("correctOption");
+    
+                questions.add(new Question(id, questionText, options, correctOption));
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return questions;
+    }
+
+    public static List<String[]> getStudentResults(String studentName) {
+        List<String[]> results = new ArrayList<>();
+        String sql = "SELECT quiz_name, score FROM results WHERE student_name = ? ORDER BY id DESC LIMIT 10";
+    
+        try (Connection conn = ConnFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            stmt.setString(1, studentName);
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                String quizName = rs.getString("quiz_name");
+                String score = rs.getString("score");
+                results.add(new String[]{quizName, score});
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return results;
+    }
+
+    public static List<Question> getQuizQuestions(int quizId) {
+        List<Question> questions = new ArrayList<>();
+        String sql = "SELECT q.id, q.question, q.optionA, q.optionB, q.optionC, q.optionD, q.correctOption " +
+                     "FROM quiz_sequence qs " +
+                     "JOIN questions q ON qs.question_id = q.id " +
+                     "WHERE qs.quiz_id = ? " +
+                     "ORDER BY qs.question_order";
+    
+        try (Connection conn = ConnFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            stmt.setInt(1, quizId);
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String questionText = rs.getString("question");
+                String[] options = {
+                    rs.getString("optionA"),
+                    rs.getString("optionB"),
+                    rs.getString("optionC"),
+                    rs.getString("optionD")
+                };
+                int correctOption = rs.getInt("correctOption");
+    
+                questions.add(new Question(id, questionText, options, correctOption));
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return questions;
     }
 }
