@@ -1,7 +1,6 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.*;
 
 public class GuiCentralAluno extends JFrame {
     private JButton playRandomButton;
@@ -46,7 +45,7 @@ public class GuiCentralAluno extends JFrame {
             JOptionPane.showMessageDialog(this, "Não há perguntas suficientes no banco de dados.");
             return;
         }
-        new GuiQuestions(questions); // Abre a interface do quiz com as perguntas
+        new GuiQuestions(questions, user); // Abre a interface do quiz com as perguntas
     }
 
     private void playProfessorQuiz() {
@@ -56,7 +55,7 @@ public class GuiCentralAluno extends JFrame {
             JOptionPane.showMessageDialog(this, "Nenhum quiz configurado pelo professor no momento.");
             return;
         }
-        new GuiQuestions(questions); // Abre a interface do quiz com as perguntas
+        new GuiQuestions(questions, user); // Abre a interface do quiz com as perguntas
     }
 
     private void viewResults() {

@@ -157,7 +157,7 @@ public class CrudBD {
 
     public static List<String[]> getResults() {
         List<String[]> results = new ArrayList<>();
-        String sql = "SELECT student_name, quiz_name, score FROM results";
+        String sql = "SELECT student_name, quiz_name, score FROM results ORDER BY id DESC";
     
         try (Connection conn = ConnFactory.getConnection();
              Statement stmt = conn.createStatement();
@@ -210,12 +210,12 @@ public class CrudBD {
 
     public static List<String[]> getStudentResults(String studentName) {
         List<String[]> results = new ArrayList<>();
-        String sql = "SELECT quiz_name, score FROM results WHERE student_name = ? ORDER BY id DESC LIMIT 10";
+        String sql = "SELECT quiz_name, score FROM results WHERE student_name = ? ORDER BY id DESC";
     
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
-            stmt.setString(1, studentName);
+            stmt.setString(1, studentName); // Filtra os resultados pelo nome do aluno
             ResultSet rs = stmt.executeQuery();
     
             while (rs.next()) {
@@ -264,5 +264,21 @@ public class CrudBD {
         }
     
         return questions;
+    }
+
+    public static void saveResult(String studentName, String quizName, int score) {
+        String sql = "INSERT INTO results (student_name, quiz_name, score) VALUES (?, ?, ?)";
+    
+        try (Connection conn = ConnFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            stmt.setString(1, studentName);
+            stmt.setString(2, quizName);
+            stmt.setInt(3, score);
+            stmt.executeUpdate();
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

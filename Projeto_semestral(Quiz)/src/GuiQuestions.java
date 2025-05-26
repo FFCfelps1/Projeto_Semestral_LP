@@ -10,9 +10,12 @@ public class GuiQuestions extends JFrame {
 
     private List<Question> questions;
     private int currentQuestionIndex = 0;
+    private int correctAnswers = 0; // Adicionado para rastrear respostas corretas
+    private User user; // Adicionado para armazenar o usuário atual
 
-    public GuiQuestions(List<Question> questions) {
+    public GuiQuestions(List<Question> questions, User user) { // Atualizado para aceitar o objeto User
         this.questions = questions;
+        this.user = user; // Inicializa o campo user
 
         setTitle("Quiz App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,8 +46,7 @@ public class GuiQuestions extends JFrame {
         questionPanel.removeAll();
 
         if (currentQuestionIndex >= questions.size()) {
-            JOptionPane.showMessageDialog(this, "Parabéns! Você terminou o quiz." + "\nResposta corretas: " + currentQuestionIndex);
-            System.exit(0);
+            endQuiz(); // Finaliza o quiz quando todas as perguntas forem respondidas
             return;
         }
 
@@ -64,6 +66,7 @@ public class GuiQuestions extends JFrame {
             btn.addActionListener(e -> {
                 System.out.println("Opção selecionada: " + answer);
                 if (q.isCorrect(answer)) {
+                    correctAnswers++; // Incrementa o número de respostas corretas
                     currentQuestionIndex++;
                     JOptionPane.showMessageDialog(this, "Resposta correta!");
                     showNextQuestion();
@@ -75,9 +78,22 @@ public class GuiQuestions extends JFrame {
             questionPanel.add(btn);
         }
 
-
-    
         questionPanel.revalidate();
         questionPanel.repaint();
+    }
+
+    public void finishQuiz(String studentName, String quizName, int correctAnswers, int totalQuestions) {
+        int score = (int) ((double) correctAnswers / totalQuestions * 100); // Calcula a pontuação em porcentagem
+        CrudBD.saveResult(studentName, quizName, score); // Salva o resultado no banco de dados
+        JOptionPane.showMessageDialog(this, "Quiz finalizado! Sua pontuação: " + score + "%");
+    }
+
+    private void endQuiz() {
+        int totalQuestions = questions.size(); // Total de perguntas no quiz
+        String quizName = "Quiz Configurado"; // Nome do quiz (pode ser dinâmico)
+        String studentName = user.getName(); // Nome do aluno (recuperado do objeto `User`)
+
+        finishQuiz(studentName, quizName, correctAnswers, totalQuestions); // Salva o resultado
+        dispose(); // Fecha a janela do quiz
     }
 }

@@ -18,6 +18,10 @@ public class GuiViewResultsProfessor extends JFrame {
         // Tabela de resultados
         String[] columnNames = {"Aluno", "Quiz", "Pontuação"};
         List<String[]> results = CrudBD.getResults(); // Recupera os resultados do banco de dados
+        if (results.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nenhum resultado encontrado.");
+            return;
+        }
         String[][] data = results.toArray(new String[0][]);
 
         resultsTable = new JTable(data, columnNames);

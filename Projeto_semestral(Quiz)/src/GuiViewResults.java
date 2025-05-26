@@ -17,6 +17,10 @@ public class GuiViewResults extends JFrame {
 
         // Tabela de resultados
         String[] columnNames = {"Quiz", "Pontuação"};
+        if (results.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Você ainda não possui resultados.");
+            return;
+        }
         String[][] data = results.toArray(new String[0][]);
 
         resultsTable = new JTable(data, columnNames);
