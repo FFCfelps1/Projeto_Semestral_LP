@@ -10,12 +10,12 @@ public class GuiQuestions extends JFrame {
 
     private List<Question> questions;
     private int currentQuestionIndex = 0;
-    private int correctAnswers = 0; // Adicionado para rastrear respostas corretas
-    private User user; // Adicionado para armazenar o usuário atual
+    private int correctAnswers = 0;
+    private User user;
 
-    public GuiQuestions(List<Question> questions, User user) { // Atualizado para aceitar o objeto User
+    public GuiQuestions(List<Question> questions, User user) {
         this.questions = questions;
-        this.user = user; // Inicializa o campo user
+        this.user = user;
 
         setTitle("Quiz App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,82 +44,62 @@ public class GuiQuestions extends JFrame {
 
     private void showNextQuestion() {
         questionPanel.removeAll();
-    
+
         if (currentQuestionIndex >= questions.size()) {
-            endQuiz(); // Finaliza o quiz quando todas as perguntas forem respondidas
+            endQuiz();
             return;
         }
-    
+
         Question q = questions.get(currentQuestionIndex);
-    
+
         JLabel questionLabel = new JLabel(q.getQuestion());
         questionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         questionPanel.add(Box.createVerticalStrut(10));
         questionPanel.add(questionLabel);
-    
+
         String[] options = q.getOptions();
-    
-        // Painel para organizar os botões em um grid 2x2
-        JPanel optionsPanel = new JPanel(new GridLayout(2, 2, 10, 10)); // 2 linhas, 2 colunas, espaçamento de 10px
+
+        JPanel optionsPanel = new JPanel(new GridLayout(2, 2, 10, 10));
         optionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    
+
         for (int i = 0; i < options.length; i++) {
-    JButton btn = new JButton("<html><center>" + options[i] + "</center></html>"); // Permite quebra de linha no texto
-    int answer = i;
-    btn.setPreferredSize(new Dimension(200, 100)); // Define o tamanho dos botões
+            JButton btn = new JButton("<html><center>" + options[i] + "</center></html>");
+            int answer = i;
+            btn.setPreferredSize(new Dimension(200, 100));
 
-    // Define a cor de fundo para cada botão
-    /*switch (i) {
-        case 0:
-            btn.setBackground(Color.RED); // Primeira opção - Vermelha
-            break;
-        case 1:
-            btn.setBackground(Color.BLUE); // Segunda opção - Azul
-            break;
-        case 2:
-            btn.setBackground(Color.YELLOW); // Terceira opção - Amarela
-            break;
-        case 3:
-            btn.setBackground(Color.GREEN); // Quarta opção - Verde
-            break;
-    }*/
+            btn.addActionListener(e -> {
+                if (q.isCorrect(answer)) {
+                    correctAnswers++;
+                    JOptionPane.showMessageDialog(this, "Resposta correta!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Resposta incorreta.");
+                }
+                currentQuestionIndex++;
+                showNextQuestion();
+            });
 
-    // Adiciona o evento de clique
-    btn.addActionListener(e -> {
-        System.out.println("Opção selecionada: " + answer);
-        if (q.isCorrect(answer)) {
-            correctAnswers++; // Incrementa o número de respostas corretas
-            currentQuestionIndex++;
-            JOptionPane.showMessageDialog(this, "Resposta correta!");
-            showNextQuestion();
-        } else {
-            JOptionPane.showMessageDialog(this, "Resposta incorreta. Tente novamente.");
-            showNextQuestion();
+            optionsPanel.add(btn);
         }
-    });
 
-    optionsPanel.add(btn);
-}
-    
         questionPanel.add(Box.createVerticalStrut(20));
         questionPanel.add(optionsPanel);
-    
+
         questionPanel.revalidate();
         questionPanel.repaint();
     }
 
     public void finishQuiz(String studentName, String quizName, int correctAnswers, int totalQuestions) {
-        int score = (int) ((double) correctAnswers / totalQuestions * 100); // Calcula a pontuação em porcentagem
-        CrudBD.saveResult(studentName, quizName, score); // Salva o resultado no banco de dados
+        int score = (int) ((double) correctAnswers / totalQuestions * 100);
+        CrudBD.saveResult(studentName, quizName, score);
         JOptionPane.showMessageDialog(this, "Quiz finalizado! Sua pontuação: " + score + "%");
     }
 
     private void endQuiz() {
-        int totalQuestions = questions.size(); // Total de perguntas no quiz
-        String quizName = "Quiz Configurado"; // Nome do quiz (pode ser dinâmico)
-        String studentName = user.getName(); // Nome do aluno (recuperado do objeto `User`)
+        int totalQuestions = questions.size();
+        String quizName = "Quiz Configurado";
+        String studentName = user.getName();
 
-        finishQuiz(studentName, quizName, correctAnswers, totalQuestions); // Salva o resultado
-        dispose(); // Fecha a janela do quiz
+        finishQuiz(studentName, quizName, correctAnswers, totalQuestions);
+        dispose();
     }
 }

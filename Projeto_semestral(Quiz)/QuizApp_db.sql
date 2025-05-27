@@ -1,10 +1,10 @@
--- 1️⃣ Criação do Banco de Dados
 CREATE DATABASE IF NOT EXISTS quizdb;
 USE quizdb;
 
-DROP TABLE users;
+-- DROP TABLE users;
 CREATE TABLE users (
     name VARCHAR(255) PRIMARY KEY,
+    senha VARCHAR(255) NOT NULL,
     score INT DEFAULT 0
 );
 
@@ -80,9 +80,17 @@ select * from questions;
 select * from users; 
 DESCRIBE questions;
 
-CREATE TABLE quizzes (
+-- DROP TABLE quizzes;
+CREATE TABLE IF NOT EXISTS quizzes (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+-- Tabela de associação quiz-pergunta
+CREATE TABLE IF NOT EXISTS quiz_questions (
+    quiz_id INT NOT NULL,
     question_id INT NOT NULL,
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
     FOREIGN KEY (question_id) REFERENCES questions(id)
 );
 
