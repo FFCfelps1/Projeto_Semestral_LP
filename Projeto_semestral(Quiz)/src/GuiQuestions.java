@@ -44,40 +44,66 @@ public class GuiQuestions extends JFrame {
 
     private void showNextQuestion() {
         questionPanel.removeAll();
-
+    
         if (currentQuestionIndex >= questions.size()) {
             endQuiz(); // Finaliza o quiz quando todas as perguntas forem respondidas
             return;
         }
-
+    
         Question q = questions.get(currentQuestionIndex);
-
+    
         JLabel questionLabel = new JLabel(q.getQuestion());
         questionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         questionPanel.add(Box.createVerticalStrut(10));
         questionPanel.add(questionLabel);
-
+    
         String[] options = q.getOptions();
-
+    
+        // Painel para organizar os botões em um grid 2x2
+        JPanel optionsPanel = new JPanel(new GridLayout(2, 2, 10, 10)); // 2 linhas, 2 colunas, espaçamento de 10px
+        optionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
         for (int i = 0; i < options.length; i++) {
-            JButton btn = new JButton(options[i]);
-            int answer = i;
-            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.addActionListener(e -> {
-                System.out.println("Opção selecionada: " + answer);
-                if (q.isCorrect(answer)) {
-                    correctAnswers++; // Incrementa o número de respostas corretas
-                    currentQuestionIndex++;
-                    JOptionPane.showMessageDialog(this, "Resposta correta!");
-                    showNextQuestion();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Resposta incorreta. Tente novamente.");
-                }
-            });
-            questionPanel.add(Box.createVerticalStrut(10));
-            questionPanel.add(btn);
-        }
+    JButton btn = new JButton("<html><center>" + options[i] + "</center></html>"); // Permite quebra de linha no texto
+    int answer = i;
+    btn.setPreferredSize(new Dimension(200, 100)); // Define o tamanho dos botões
 
+    // Define a cor de fundo para cada botão
+    /*switch (i) {
+        case 0:
+            btn.setBackground(Color.RED); // Primeira opção - Vermelha
+            break;
+        case 1:
+            btn.setBackground(Color.BLUE); // Segunda opção - Azul
+            break;
+        case 2:
+            btn.setBackground(Color.YELLOW); // Terceira opção - Amarela
+            break;
+        case 3:
+            btn.setBackground(Color.GREEN); // Quarta opção - Verde
+            break;
+    }*/
+
+    // Adiciona o evento de clique
+    btn.addActionListener(e -> {
+        System.out.println("Opção selecionada: " + answer);
+        if (q.isCorrect(answer)) {
+            correctAnswers++; // Incrementa o número de respostas corretas
+            currentQuestionIndex++;
+            JOptionPane.showMessageDialog(this, "Resposta correta!");
+            showNextQuestion();
+        } else {
+            JOptionPane.showMessageDialog(this, "Resposta incorreta. Tente novamente.");
+            showNextQuestion();
+        }
+    });
+
+    optionsPanel.add(btn);
+}
+    
+        questionPanel.add(Box.createVerticalStrut(20));
+        questionPanel.add(optionsPanel);
+    
         questionPanel.revalidate();
         questionPanel.repaint();
     }

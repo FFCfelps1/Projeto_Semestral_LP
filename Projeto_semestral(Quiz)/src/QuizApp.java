@@ -44,5 +44,3 @@ public class QuizApp {
         new GuiCentralAluno(user);
     }
 }
-//oi
-//ola
