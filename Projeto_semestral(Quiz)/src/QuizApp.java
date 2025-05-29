@@ -34,13 +34,13 @@ public class QuizApp {
 
         // Fluxo para professores
         if (isTeacher) {
-            System.out.println("Bem-vindo, Professor " + user.getName() + "!");
+            JOptionPane.showMessageDialog(null, "Bem-vindo, Professor " + user.getName() + "!");
             new GuiCentralProfessor();
             return;
         }
 
         // Fluxo para alunos
-        System.out.println("Bem-vindo, Aluno " + user.getName() + "!");
+        JOptionPane.showMessageDialog(null, "Bem-vindo, Aluno " + user.getName() + "!");
         new GuiCentralAluno(user);
     }
 }
