@@ -10,17 +10,6 @@ CREATE TABLE users (
     score INT DEFAULT 0
 );
 
--- Inserção de usuários pré-cadastrados com senha padrão
-INSERT INTO users (name, senha) VALUES 
-('Matheus', '12345'),
-('Felipe', '12345'),
-('Jonas', '12345'),
-('Fernando', '12345'),
-('Ruthe', '12345'),
-('Calvetti', '12345');
-
--- Demais usuários poderão se cadastrar com sua própria senha no momento do login/registro.
-
 -- Tabela de perguntas
 DROP TABLE IF EXISTS questions;
 CREATE TABLE questions (
