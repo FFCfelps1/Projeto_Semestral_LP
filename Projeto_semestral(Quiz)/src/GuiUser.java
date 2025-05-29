@@ -1,7 +1,7 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class GuiUser extends JDialog {
     private JTextField nameField;
@@ -11,7 +11,7 @@ public class GuiUser extends JDialog {
     private JPasswordField passwordField; 
     private JButton loginButton;
 
-    private static final String TEACHER_CODE = "20comer70correr"; // Código de confirmação para professores
+    private static final String TEACHER_PASSWORD = "20comer70correr"; // Código de confirmação para professores
     private String userName;
     private String senha;
     private boolean isTeacher;
@@ -40,11 +40,6 @@ public class GuiUser extends JDialog {
         group.add(studentButton);
         group.add(teacherButton);
 
-        // Campo para código de professor
-        JLabel codeLabel = new JLabel("Código de confirmação (somente para professores):");
-        codeField = new JTextField();
-        codeField.setEnabled(false); // Desabilitado por padrão
-
         // Botão de login
         loginButton = new JButton("Entrar");
 
@@ -55,8 +50,6 @@ public class GuiUser extends JDialog {
         mainPanel.add(passwordField);
         mainPanel.add(studentButton);
         mainPanel.add(teacherButton);
-        mainPanel.add(codeLabel);
-        mainPanel.add(codeField);
 
         add(mainPanel, BorderLayout.CENTER);
         add(loginButton, BorderLayout.SOUTH);
@@ -76,8 +69,8 @@ public class GuiUser extends JDialog {
                 }
 
                 if (teacherButton.isSelected()) {
-                    String code = codeField.getText().trim();
-                    if (!code.equals(TEACHER_CODE)) {
+                    String password = new String(passwordField.getPassword()).trim();
+                    if (!password.equals(TEACHER_PASSWORD)) {
                         JOptionPane.showMessageDialog(GuiUser.this, "Código de confirmação inválido.");
                         return;
                     }

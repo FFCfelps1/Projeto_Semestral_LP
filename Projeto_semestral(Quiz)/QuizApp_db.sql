@@ -1,15 +1,28 @@
+-- Criação do banco de dados
 CREATE DATABASE IF NOT EXISTS quizdb;
 USE quizdb;
 
--- DROP TABLE users;
+-- Tabela de usuários
+DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     name VARCHAR(255) PRIMARY KEY,
     senha VARCHAR(255) NOT NULL,
     score INT DEFAULT 0
 );
 
-DROP TABLE IF EXISTS questions;
+-- Inserção de usuários pré-cadastrados com senha padrão
+INSERT INTO users (name, senha) VALUES 
+('Matheus', '12345'),
+('Felipe', '12345'),
+('Jonas', '12345'),
+('Fernando', '12345'),
+('Ruthe', '12345'),
+('Calvetti', '12345');
 
+-- Demais usuários poderão se cadastrar com sua própria senha no momento do login/registro.
+
+-- Tabela de perguntas
+DROP TABLE IF EXISTS questions;
 CREATE TABLE questions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     question VARCHAR(255) NOT NULL,
@@ -20,6 +33,7 @@ CREATE TABLE questions (
     correctOption INT NOT NULL
 );
 
+-- Inserção de perguntas
 INSERT INTO questions (question, optionA, optionB, optionC, optionD, correctOption) VALUES
 ('Qual é a capital da França?', 'Paris', 'Londres', 'Roma', 'Berlim', 0),
 ('Qual é o maior planeta do sistema solar?', 'Terra', 'Marte', 'Júpiter', 'Saturno', 2),
@@ -30,9 +44,7 @@ INSERT INTO questions (question, optionA, optionB, optionC, optionD, correctOpti
 ('Qual é o animal terrestre mais rápido do mundo?', 'Leopardo', 'Guepardo', 'Tigre', 'Cavalo', 1),
 ('Qual é o menor país do mundo?', 'Mônaco', 'Malta', 'Vaticano', 'Liechtenstein', 2),
 ('Qual linguagem é usada para desenvolver aplicativos Android nativos?', 'Java', 'Python', 'Swift', 'Kotlin', 0),
-('Quem desenvolveu a Teoria da Relatividade?', 'Isaac Newton', 'Nikola Tesla', 'Albert Einstein', 'Stephen Hawking', 2);
-
-INSERT INTO questions (question, optionA, optionB, optionC, optionD, correctOption) VALUES
+('Quem desenvolveu a Teoria da Relatividade?', 'Isaac Newton', 'Nikola Tesla', 'Albert Einstein', 'Stephen Hawking', 2),
 ('Qual é o rio mais longo do mundo?', 'Amazonas', 'Nilo', 'Yangtzé', 'Mississipi', 1),
 ('Quem foi o primeiro presidente do Brasil?', 'Getúlio Vargas', 'Marechal Deodoro da Fonseca', 'Juscelino Kubitschek', 'Dom Pedro II', 1),
 ('Qual é o continente com mais países?', 'África', 'Ásia', 'Europa', 'América', 0),
@@ -74,33 +86,35 @@ INSERT INTO questions (question, optionA, optionB, optionC, optionD, correctOpti
 ('Quem é conhecido como o "Pai da Computação"?', 'Alan Turing', 'Bill Gates', 'Steve Jobs', 'Tim Berners-Lee', 0),
 ('Qual é a capital da Austrália?', 'Sydney', 'Melbourne', 'Perth', 'Canberra', 3);
 
-
-
-select * from questions;
-select * from users; 
-DESCRIBE questions;
-
--- DROP TABLE quizzes;
-CREATE TABLE IF NOT EXISTS quizzes (
+-- Tabela de quizzes
+DROP TABLE IF EXISTS quizzes;
+CREATE TABLE quizzes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
 -- Tabela de associação quiz-pergunta
-CREATE TABLE IF NOT EXISTS quiz_questions (
+DROP TABLE IF EXISTS quiz_questions;
+CREATE TABLE quiz_questions (
     quiz_id INT NOT NULL,
     question_id INT NOT NULL,
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
     FOREIGN KEY (question_id) REFERENCES questions(id)
 );
 
+-- Tabela de resultados (corrigida)
+DROP TABLE IF EXISTS results;
 CREATE TABLE results (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    student_name VARCHAR(255) NOT NULL,
+    user_name VARCHAR(255) NOT NULL,
     quiz_name VARCHAR(255) NOT NULL,
-    score INT NOT NULL
+    score INT NOT NULL,
+    FOREIGN KEY (user_name) REFERENCES users(name)
 );
 
-
-select * from quizzes;
-select * from results;
+-- Consultas para verificação
+SELECT * FROM users;
+SELECT * FROM questions;
+SELECT * FROM quizzes;
+SELECT * FROM results;
+DESCRIBE questions;
