@@ -1,8 +1,8 @@
 import java.awt.*;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 
 public class GuiViewResults extends JFrame {
     private JTable resultsTable;

@@ -5,9 +5,10 @@ USE quizdb;
 -- Tabela de usuários
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
-    name VARCHAR(255) PRIMARY KEY,
+    user_id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
-    score INT DEFAULT 0
+    totalScore INT DEFAULT 0
 );
 
 -- Tabela de perguntas
@@ -95,10 +96,10 @@ CREATE TABLE quiz_questions (
 DROP TABLE IF EXISTS results;
 CREATE TABLE results (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_name VARCHAR(255) NOT NULL,
+    user_id INT NOT NULL PRIMARY KEY,
     quiz_name VARCHAR(255) NOT NULL,
-    score INT NOT NULL,
-    FOREIGN KEY (user_name) REFERENCES users(name)
+    totalScore INT NOT NULL,	
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
 -- Consultas para verificação

@@ -4,44 +4,23 @@ import java.util.List;
 
 public class CrudBD {
 
-    public static List<Question> getQuestions() {
-        List<Question> questions = new ArrayList<>();
-        String sql = "SELECT * FROM questions";
-    
-        try (Connection conn = ConnFactory.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-    
-            while (rs.next()) {
-                int id = rs.getInt("id"); // Recupera o ID da pergunta
-                String questionText = rs.getString("question");
-                String[] options = {
-                    rs.getString("optionA"),
-                    rs.getString("optionB"),
-                    rs.getString("optionC"),
-                    rs.getString("optionD")
-                };
-                int correctOption = rs.getInt("correctOption");
-    
-                questions.add(new Question(id, questionText, options, correctOption));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return questions;
-    }
-
+    //// USUARIO
     // Método para salvar o usuário no banco de dados
     public static void saveUser(User user, String senha) {
-        String sql = "INSERT INTO users (name, senha, score) VALUES (?, ?, ?)" + 
-                     " ON DUPLICATE KEY UPDATE score = ?";
+        String sql = "INSERT INTO users (user_id, name, senha, totalScore) VALUES (?, ?, ?, ?)" + 
+                     " ON DUPLICATE KEY UPDATE totalScore = ?";
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, user.getName());
-            stmt.setString(2, senha);
-            stmt.setInt(3, user.getScore());
+            // Gera um ID aleatório entre 10000 e 99999
+            int randomId = (int)(Math.random() * 90000) + 10000;
+            user.setUser_id(randomId);
+
+            stmt.setInt(1, user.getUser_id());
+            stmt.setString(2, user.getName());
+            stmt.setString(3, senha);
             stmt.setInt(4, user.getScore());
+            stmt.setInt(5, user.getScore());
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -71,6 +50,55 @@ public class CrudBD {
         return null;
     }
 
+    // Método getUser apenas pelo nome
+    public static User getUser(String name) {
+        String sql = "SELECT * FROM users WHERE name = ?";
+        try (Connection conn = ConnFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                User user = new User(rs.getString("name"), rs.getString("senha"));
+                user.addScore(rs.getInt("score"));
+                return user;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    ////
+
+    //// QUESTIONS
+    public static List<Question> getQuestions() {
+        List<Question> questions = new ArrayList<>();
+        String sql = "SELECT * FROM questions";
+    
+        try (Connection conn = ConnFactory.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+    
+            while (rs.next()) {
+                int id = rs.getInt("id"); // Recupera o ID da pergunta
+                String questionText = rs.getString("question");
+                String[] options = {
+                    rs.getString("optionA"),
+                    rs.getString("optionB"),
+                    rs.getString("optionC"),
+                    rs.getString("optionD")
+                };
+                int correctOption = rs.getInt("correctOption");
+    
+                questions.add(new Question(id, questionText, options, correctOption));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return questions;
+    }
     public static void addQuestion(Question question) {
         String sql = "INSERT INTO questions (question, optionA, optionB, optionC, optionD, correctOption) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -123,36 +151,6 @@ public class CrudBD {
         }
     }
 
-    public static void saveQuiz(String quizName, List<Question> questions) {
-        String insertQuizSql = "INSERT INTO quizzes (name) VALUES (?)";
-        String insertQuestionSql = "INSERT INTO quiz_questions (quiz_id, question_id) VALUES (?, ?)";
-    
-        try (Connection conn = ConnFactory.getConnection();
-             PreparedStatement quizStmt = conn.prepareStatement(insertQuizSql, Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement questionStmt = conn.prepareStatement(insertQuestionSql)) {
-    
-            // Insere o quiz e recupera o ID gerado
-            quizStmt.setString(1, quizName);
-            quizStmt.executeUpdate();
-            ResultSet rs = quizStmt.getGeneratedKeys();
-            if (!rs.next()) {
-                throw new SQLException("Falha ao criar o quiz.");
-            }
-            int quizId = rs.getInt(1);
-    
-            // Insere as perguntas associadas ao quiz
-            for (Question question : questions) {
-                questionStmt.setInt(1, quizId);
-                questionStmt.setInt(2, question.getId());
-                questionStmt.addBatch();
-            }
-            questionStmt.executeBatch();
-    
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     //Método Get ID
     public static int getId(String questionText) {
         String sql = "SELECT id FROM questions WHERE question = ?";
@@ -170,28 +168,6 @@ public class CrudBD {
             e.printStackTrace();
         }
         return -1; // Retorna -1 se a pergunta não for encontrada
-    }
-
-    public static List<String[]> getResults() {
-        List<String[]> results = new ArrayList<>();
-        String sql = "SELECT student_name, quiz_name, score FROM results ORDER BY id DESC";
-    
-        try (Connection conn = ConnFactory.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-    
-            while (rs.next()) {
-                String studentName = rs.getString("student_name");
-                String quizName = rs.getString("quiz_name");
-                String score = rs.getString("score");
-                results.add(new String[]{studentName, quizName, score});
-            }
-    
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    
-        return results;
     }
 
     public static List<Question> getRandomQuestions(int limit) {
@@ -224,28 +200,37 @@ public class CrudBD {
     
         return questions;
     }
+    ////
 
-    public static List<String[]> getStudentResults(String studentName) {
-        List<String[]> results = new ArrayList<>();
-        String sql = "SELECT quiz_name, score FROM results WHERE student_name = ? ORDER BY id DESC";
+    //// QUIZZES
+    public static void saveQuiz(String quizName, List<Question> questions) {
+        String insertQuizSql = "INSERT INTO quizzes (name) VALUES (?)";
+        String insertQuestionSql = "INSERT INTO quiz_questions (quiz_id, question_id) VALUES (?, ?)";
     
         try (Connection conn = ConnFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement quizStmt = conn.prepareStatement(insertQuizSql, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement questionStmt = conn.prepareStatement(insertQuestionSql)) {
     
-            stmt.setString(1, studentName); // Filtra os resultados pelo nome do aluno
-            ResultSet rs = stmt.executeQuery();
-    
-            while (rs.next()) {
-                String quizName = rs.getString("quiz_name");
-                String score = rs.getString("score");
-                results.add(new String[]{quizName, score});
+            // Insere o quiz e recupera o ID gerado
+            quizStmt.setString(1, quizName);
+            quizStmt.executeUpdate();
+            ResultSet rs = quizStmt.getGeneratedKeys();
+            if (!rs.next()) {
+                throw new SQLException("Falha ao criar o quiz.");
             }
+            int quizId = rs.getInt(1);
+    
+            // Insere as perguntas associadas ao quiz
+            for (Question question : questions) {
+                questionStmt.setInt(1, quizId);
+                questionStmt.setInt(2, question.getId());
+                questionStmt.addBatch();
+            }
+            questionStmt.executeBatch();
     
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
-        return results;
     }
 
     public static List<Question> getQuizQuestions(int quizId) {
@@ -282,15 +267,63 @@ public class CrudBD {
         return questions;
     }
 
-    public static void saveResult(String studentName, String quizName, int score) {
-        String sql = "INSERT INTO results (student_name, quiz_name, score) VALUES (?, ?, ?)";
+    //// RESULTS
+    public static List<String[]> getResults() {
+        List<String[]> results = new ArrayList<>();
+        String sql = "SELECT user_id, quiz_name, totalScore FROM results ORDER BY id DESC";
+    
+        try (Connection conn = ConnFactory.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+    
+            while (rs.next()) {
+                String user_id = rs.getString("user_id");
+                String quizName = rs.getString("quiz_name");
+                String totalScore = rs.getString("totalScore");
+                results.add(new String[]{user_id, quizName, totalScore});
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return results;
+    }
+
+
+    public static List<String[]> getStudentResults(String user_id) {
+        List<String[]> results = new ArrayList<>();
+        String sql = "SELECT quiz_name, totalScore FROM results WHERE user_id = ? ORDER BY id DESC";
     
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
-            stmt.setString(1, studentName);
+            stmt.setString(1, user_id); // Filtra os resultados pelo nome do aluno
+            ResultSet rs = stmt.executeQuery();
+    
+            while (rs.next()) {
+                String quizName = rs.getString("quiz_name");
+                String totalScore = rs.getString("totalScore");
+                results.add(new String[]{quizName, totalScore});
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return results;
+    }
+
+
+    public static void saveResult(int user_id, String quizName, int totalScore) {
+        String sql = "INSERT INTO results (user_id, quiz_name, totalScore) VALUES (?, ?, ?)";
+    
+        try (Connection conn = ConnFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    
+            stmt.setInt(1, user_id);
             stmt.setString(2, quizName);
-            stmt.setInt(3, score);
+            stmt.setInt(3, totalScore);
             stmt.executeUpdate();
     
         } catch (SQLException e) {
@@ -317,27 +350,5 @@ public class CrudBD {
         }
     
         return quizzes;
-    }
-    // Método getUser apemas pelo nome
-        public static User getUser(String name) {
-        String sql = "SELECT * FROM users WHERE name = ?";
-        try (Connection conn = ConnFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, name);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                User user = new User(rs.getString("name"), rs.getString("senha"));
-                user.addScore(rs.getInt("score"));
-                return user;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    
+    } 
 }

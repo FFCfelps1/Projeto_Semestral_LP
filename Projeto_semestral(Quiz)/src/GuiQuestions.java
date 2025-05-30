@@ -13,6 +13,7 @@ public class GuiQuestions extends JFrame {
     private int currentQuestionIndex = 0;
     private int totalScore = 0;
     private User user;
+    private int acertos = 0; // Contador de acertos
 
     // Timer
     private Timer timer;
@@ -125,6 +126,7 @@ public class GuiQuestions extends JFrame {
                     // Pontuação: 1000 - (tempo gasto em segundos * 1000 / TIME_LIMIT)
                     score = Math.max(0, 1000 - (int)((elapsedMillis * 1000) / (TIME_LIMIT * 1000)));
                     JOptionPane.showMessageDialog(this, "Resposta correta!\nPontuação: " + score);
+                    acertos ++;
                 } else {
                     JOptionPane.showMessageDialog(this, "Resposta incorreta.\nPontuação: 0");
                 }
@@ -143,15 +145,17 @@ public class GuiQuestions extends JFrame {
         questionPanel.repaint();
     }
 
-    public void finishQuiz(String studentName, String quizName, int score, int totalQuestions) {
-        CrudBD.saveResult(studentName, quizName, score);
-        JOptionPane.showMessageDialog(this, "Quiz finalizado! Sua pontuação: " + score + " de " + (totalQuestions * 1000));
+    public void finishQuiz(int studentName, String quizName, int totalScore, int totalQuestions) {
+        CrudBD.saveResult(studentName, quizName, totalScore);
+        JOptionPane.showMessageDialog(this, "Quiz finalizado! Sua pontuação: " + totalScore + " de " + (totalQuestions * 100));
     }
 
     private void endQuiz() {
         int totalQuestions = questions.size();
         String quizName = "Quiz Configurado";
-        String studentName = user.getName();
+        int studentName = user.getUser_id();
+
+        totalScore = totalScore / acertos;
 
         finishQuiz(studentName, quizName, totalScore, totalQuestions);
         dispose();
