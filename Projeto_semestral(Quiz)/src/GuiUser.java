@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,63 +8,82 @@ public class GuiUser extends JDialog {
     private JTextField nameField;
     private JRadioButton studentButton;
     private JRadioButton teacherButton;
-    private JTextField codeField;
     private JPasswordField passwordField;
     private JButton loginButton;
-    private JTextField observacaoField;
 
-    private static final String TEACHER_PASSWORD = "12345"; // Código de confirmação para professores
+    private static final String TEACHER_PASSWORD = "12345";
     private String userName;
     private String senha;
     private boolean isTeacher;
 
     public GuiUser(Frame parent) {
         super(parent, "Cadastro de Usuário", true);
-        setSize(400, 250);
+        setSize(450, 350);
         setLocationRelativeTo(parent);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        // Painel principal
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(7, 1));
+        // Cores e fontes
+        Color fundo = new Color(245, 245, 245);
+        Color botao = new Color(230, 230, 230);
+        Font fonte = new Font("Segoe UI", Font.PLAIN, 15);
 
-        // Observacao para novos usuarios
-        JLabel observacaoLabel = new JLabel("Caso não tenha login, digite seu nome e crie sua senha");
-        observacaoField = new JTextField();
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        mainPanel.setBackground(fundo);
 
-        // Campo de nome
-        JLabel nameLabel = new JLabel("Digite seu nome:");
+        JLabel observacaoLabel = new JLabel("<html><b>Cadastro:</b> Digite seu nome, senha e selecione seu perfil.</html>");
+        observacaoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+        // Painel de campos
+        JPanel fieldsPanel = new JPanel(new GridLayout(5, 1, 10, 10));
+        fieldsPanel.setBackground(fundo);
+
         nameField = new JTextField();
+        nameField.setFont(fonte);
 
-        // Campo da senha
-        JLabel passwordLabel = new JLabel("Digite sua senha:");
         passwordField = new JPasswordField();
+        passwordField.setFont(fonte);
 
-        // Botões de seleção (Aluno ou Professor)
         studentButton = new JRadioButton("Aluno");
         teacherButton = new JRadioButton("Professor");
+
+        studentButton.setBackground(fundo);
+        teacherButton.setBackground(fundo);
+        studentButton.setFont(fonte);
+        teacherButton.setFont(fonte);
+
         ButtonGroup group = new ButtonGroup();
         group.add(studentButton);
         group.add(teacherButton);
 
-        // Botão de login
+        // Adiciona os componentes
+        fieldsPanel.add(new JLabel("Nome:", SwingConstants.LEFT));
+        fieldsPanel.add(nameField);
+        fieldsPanel.add(new JLabel("Senha:", SwingConstants.LEFT));
+        fieldsPanel.add(passwordField);
+
+        JPanel rolePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        rolePanel.setBackground(fundo);
+        rolePanel.add(studentButton);
+        rolePanel.add(teacherButton);
+        fieldsPanel.add(rolePanel);
+
         loginButton = new JButton("Entrar");
+        loginButton.setFont(fonte);
+        loginButton.setBackground(botao);
+        loginButton.setFocusPainted(false);
+        loginButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200)),
+            BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
 
-        // Adiciona componentes ao painel principal
-        mainPanel.add(observacaoLabel);
-        mainPanel.add(nameLabel);
-        mainPanel.add(nameField);
-        mainPanel.add(passwordLabel);
-        mainPanel.add(passwordField);
-        mainPanel.add(studentButton);
-        mainPanel.add(teacherButton);
+        mainPanel.add(observacaoLabel, BorderLayout.NORTH);
+        mainPanel.add(fieldsPanel, BorderLayout.CENTER);
+        mainPanel.add(loginButton, BorderLayout.SOUTH);
 
-        add(mainPanel, BorderLayout.CENTER);
-        add(loginButton, BorderLayout.SOUTH);
+        add(mainPanel);
 
-        // Listeners
-        teacherButton.addActionListener(e -> codeField.setEnabled(true)); // Habilita o campo de código
-        studentButton.addActionListener(e -> codeField.setEnabled(false)); // Desabilita o campo de código
-
+        // Listener de botão
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -88,8 +106,7 @@ public class GuiUser extends JDialog {
                 }
 
                 if (teacherButton.isSelected()) {
-                    String password = new String(passwordField.getPassword()).trim();
-                    if (!password.equals(TEACHER_PASSWORD) && !teacherName) {
+                    if (!senhaInput.equals(TEACHER_PASSWORD) && !teacherName) {
                         JOptionPane.showMessageDialog(GuiUser.this, "Login de professor inválido.");
                         return;
                     }
@@ -103,7 +120,7 @@ public class GuiUser extends JDialog {
 
                 userName = name;
                 senha = senhaInput;
-                dispose(); // Fecha a janela de login
+                dispose();
             }
         });
 

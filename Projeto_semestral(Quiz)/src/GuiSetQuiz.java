@@ -17,30 +17,59 @@ public class GuiSetQuiz extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        // Cores e fontes para visual moderno
+        Color fundo = new Color(245, 245, 245);
+        Color botao = new Color(230, 230, 230);
+        Font fonte = new Font("Segoe UI", Font.PLAIN, 14);
+
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBackground(fundo);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // Campo para o nome do quiz
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new JPanel(new BorderLayout(5, 5));
+        topPanel.setBackground(fundo);
         JLabel quizNameLabel = new JLabel("Nome do Quiz:");
+        quizNameLabel.setFont(fonte);
+
         quizNameField = new JTextField();
+        quizNameField.setFont(fonte);
+        quizNameField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
         topPanel.add(quizNameLabel, BorderLayout.WEST);
         topPanel.add(quizNameField, BorderLayout.CENTER);
 
         // Painel de perguntas com checkboxes
         questionsPanel = new JPanel();
         questionsPanel.setLayout(new BoxLayout(questionsPanel, BoxLayout.Y_AXIS));
-        JScrollPane scrollPane = new JScrollPane(questionsPanel);
+        questionsPanel.setBackground(fundo);
 
+        JScrollPane scrollPane = new JScrollPane(questionsPanel);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Selecione as perguntas"));
+        scrollPane.getViewport().setBackground(fundo);
+
+        // Botão salvar
         saveQuizButton = new JButton("Salvar Quiz");
+        saveQuizButton.setFont(fonte);
+        saveQuizButton.setBackground(botao);
+        saveQuizButton.setFocusPainted(false);
+        saveQuizButton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)));
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setBackground(fundo);
+        buttonPanel.add(saveQuizButton);
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(saveQuizButton, BorderLayout.SOUTH);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
 
         loadQuestions();
-
         saveQuizButton.addActionListener(e -> saveQuiz());
 
         setVisible(true);
@@ -50,11 +79,17 @@ public class GuiSetQuiz extends JFrame {
         questions = CrudBD.getQuestions();
         questionsPanel.removeAll();
         questionCheckBoxes = new ArrayList<>();
+
+        Font fonte = new Font("Segoe UI", Font.PLAIN, 14);
+
         for (Question question : questions) {
             JCheckBox checkBox = new JCheckBox(question.getQuestion());
+            checkBox.setFont(fonte);
+            checkBox.setBackground(new Color(245, 245, 245));
             questionCheckBoxes.add(checkBox);
             questionsPanel.add(checkBox);
         }
+
         questionsPanel.revalidate();
         questionsPanel.repaint();
     }
