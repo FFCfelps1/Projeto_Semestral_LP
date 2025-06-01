@@ -291,14 +291,14 @@ public class CrudBD {
     }
 
 
-    public static List<String[]> getStudentResults(String user_id) {
+    public static List<String[]> getStudentResults(int user_id) {
         List<String[]> results = new ArrayList<>();
         String sql = "SELECT quiz_name, totalScore FROM results WHERE user_id = ? ORDER BY id DESC";
     
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
     
-            stmt.setString(1, user_id); // Filtra os resultados pelo nome do aluno
+            stmt.setInt(1, user_id); // Filtra os resultados pelo nome do aluno
             ResultSet rs = stmt.executeQuery();
     
             while (rs.next()) {

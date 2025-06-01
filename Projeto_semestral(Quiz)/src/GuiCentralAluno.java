@@ -113,7 +113,7 @@ public class GuiCentralAluno extends JFrame {
     }
 
     private void viewResults() {
-        List<String[]> results = CrudBD.getStudentResults(user.getName());
+        List<String[]> results = CrudBD.getStudentResults(user.getUser_id());
         if (results.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Você ainda não possui resultados.");
             return;
