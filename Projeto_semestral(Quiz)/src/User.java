@@ -42,7 +42,7 @@ public class User {
         this.totalScore += points;
     }
 
-    public void setScore(int score) {
-        this.totalScore = score;
+    public void setScore(int totalScore) {
+        this.totalScore = totalScore;
     }
 }
