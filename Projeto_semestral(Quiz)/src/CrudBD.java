@@ -12,12 +12,12 @@ public class CrudBD {
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            // Gera um ID aleatório entre 10000 e 99999
+            // Gera um ID aleatório entre 1 a 100
             // Garante que o ID seja único
             // (Pega todos os IDs existentes e verifica se o novo ID já está em uso)
             while (true) {
                 boolean idExists = false;
-                int randomId = (int)(Math.random() * 90000) + 10000;
+                int randomId = (int)(Math.random() * 100) + 1;
 
                 // Verifica se o ID já existe
                 String checkSql = "SELECT COUNT(*) FROM users WHERE user_id = ?";
