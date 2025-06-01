@@ -13,8 +13,27 @@ public class CrudBD {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             // Gera um ID aleatório entre 10000 e 99999
-            int randomId = (int)(Math.random() * 90000) + 10000;
-            user.setUser_id(randomId);
+            // Garante que o ID seja único
+            // (Pega todos os IDs existentes e verifica se o novo ID já está em uso)
+            while (true) {
+                boolean idExists = false;
+                int randomId = (int)(Math.random() * 90000) + 10000;
+
+                // Verifica se o ID já existe
+                String checkSql = "SELECT COUNT(*) FROM users WHERE user_id = ?";
+                try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                    checkStmt.setInt(1, randomId);
+                    ResultSet rs = checkStmt.executeQuery();
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        idExists = true; // ID já existe
+                    }
+                }
+
+                if (!idExists) {
+                    user.setUser_id(randomId);
+                    break; // ID único encontrado
+                }
+            }
 
             stmt.setInt(1, user.getUser_id());
             stmt.setString(2, user.getName());
