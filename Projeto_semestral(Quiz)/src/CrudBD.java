@@ -13,11 +13,11 @@ public class CrudBD {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             // Gera um ID aleatório entre 10000 e 99999
-            int randomId = (int)(Math.random() * 90000) + 10000;
+            int randomId = (int)(Math.floor(Math.random() * 100));
             user.setUser_id(randomId);
 
             stmt.setInt(1, user.getUser_id());
-            stmt.setString(2, user.getName());
+            stmt.setString(2, user.getName()); 
             stmt.setString(3, senha);
             stmt.setInt(4, user.getScore());
             stmt.setInt(5, user.getScore());

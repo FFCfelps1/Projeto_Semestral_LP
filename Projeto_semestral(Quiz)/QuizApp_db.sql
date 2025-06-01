@@ -95,7 +95,7 @@ CREATE TABLE quiz_questions (
 -- Tabela de resultados (corrigida)
 DROP TABLE IF EXISTS results;
 CREATE TABLE results (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT,
     user_id INT NOT NULL PRIMARY KEY,
     quiz_name VARCHAR(255) NOT NULL,
     totalScore INT NOT NULL,	
