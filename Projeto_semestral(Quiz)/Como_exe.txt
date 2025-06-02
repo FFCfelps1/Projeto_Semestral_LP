@@ -1,0 +1,15 @@
+Tente rodar usando: "java -jar Projeto_semestral(Quiz).jar"
+
+Caso não rode tente: 
+- Veja se todas as classes estão no .jar, use "jar tf .\Projeto_semestral(Quiz).jar"
+- Caso não tiver as classes use esse comando dentro da pasta bin "jar cfe "../Projeto_semestral(Quiz).jar" QuizApp *"
+- Agora para rodar execute dentro do bin:
+"java -cp "..\Projeto_semestral(Quiz).jar;C:\Users\felip\OneDrive\Área de Trabalho\Github\Projeto_Semestral_LP\Projeto_semestral(Quiz)\lib\mysql-connector-j-8.4.0.jar" QuizApp"
+
+- Ou pode concluir de colocar o arquivo do mysql com:
+  "mkdir temp
+  cd temp
+  jar xf "../Projeto_semestral(Quiz).jar"
+  jar xf ..\lib\mysql-connector-j-8.4.0.jar
+  jar cfe ../Projeto_semestral_fat.jar QuizApp *
+  cd .."
