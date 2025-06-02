@@ -18,7 +18,7 @@ public class CrudBD {
             int attempts = 0;
             while (attempts < 100) {
                 boolean idExists = false;
-                int randomId = (int)(Math.random() * 90000) + 10000;
+                int randomId = (int)(Math.random() * 100) + 1;
 
                 // Verifica se o ID já existe
                 String checkSql = "SELECT COUNT(*) FROM users WHERE user_id = ?";
