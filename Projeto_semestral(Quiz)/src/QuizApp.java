@@ -1,6 +1,8 @@
 
 import javax.swing.JOptionPane;
+
 public class QuizApp {
+
     public static void main(String[] args) {
         // Exibe a tela de login
         GuiUser guiUser = new GuiUser(null);
@@ -32,16 +34,13 @@ public class QuizApp {
 
         // Fluxo para professores
         if (isTeacher) {
-            System.out.println("Bem-vindo, Professor " + user.getName() + "!");
+            JOptionPane.showMessageDialog(null, "Bem-vindo, Professor " + user.getName() + "!");
             new GuiCentralProfessor();
             return;
         }
 
         // Fluxo para alunos
-        System.out.println("Bem-vindo, Aluno " + user.getName() + "!");
+        JOptionPane.showMessageDialog(null, "Bem-vindo, Aluno " + user.getName() + "!");
         new GuiCentralAluno(user);
     }
 }
-
-// Fim da sessão de códigos usando MySQL
-// Mano calvo

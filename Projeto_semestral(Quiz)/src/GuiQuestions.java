@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 import javax.swing.*;
 
@@ -10,12 +11,19 @@ public class GuiQuestions extends JFrame {
 
     private List<Question> questions;
     private int currentQuestionIndex = 0;
-    private int correctAnswers = 0; // Adicionado para rastrear respostas corretas
-    private User user; // Adicionado para armazenar o usuário atual
+    private int totalScore = 0;
+    private User user;
+    private int acertos = 0; // Contador de acertos
 
-    public GuiQuestions(List<Question> questions, User user) { // Atualizado para aceitar o objeto User
+    // Timer
+    private Timer timer;
+    private long startTime;
+    private final int TIME_LIMIT = 40; // segundos por pergunta
+    private JLabel timerLabel;
+
+    public GuiQuestions(List<Question> questions, User user) {
         this.questions = questions;
-        this.user = user; // Inicializa o campo user
+        this.user = user;
 
         setTitle("Quiz App");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -45,8 +53,10 @@ public class GuiQuestions extends JFrame {
     private void showNextQuestion() {
         questionPanel.removeAll();
 
+        if (timer != null) timer.stop();
+
         if (currentQuestionIndex >= questions.size()) {
-            endQuiz(); // Finaliza o quiz quando todas as perguntas forem respondidas
+            endQuiz();
             return;
         }
 
@@ -59,41 +69,95 @@ public class GuiQuestions extends JFrame {
 
         String[] options = q.getOptions();
 
-        for (int i = 0; i < options.length; i++) {
-            JButton btn = new JButton(options[i]);
-            int answer = i;
-            btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            btn.addActionListener(e -> {
-                System.out.println("Opção selecionada: " + answer);
-                if (q.isCorrect(answer)) {
-                    correctAnswers++; // Incrementa o número de respostas corretas
+        JPanel optionsPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        optionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Timer label
+        timerLabel = new JLabel("Tempo: " + TIME_LIMIT + "s");
+        timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        questionPanel.add(Box.createVerticalStrut(10));
+        questionPanel.add(timerLabel);
+
+        // Timer logic
+        startTime = System.currentTimeMillis();
+        timer = new Timer(100, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                long elapsed = (System.currentTimeMillis() - startTime) / 1000;
+                int remaining = TIME_LIMIT - (int) elapsed;
+                timerLabel.setText("Tempo: " + remaining + "s");
+                if (remaining <= 0) {
+                    timer.stop();
+                    JOptionPane.showMessageDialog(GuiQuestions.this, "Tempo esgotado!");
                     currentQuestionIndex++;
-                    JOptionPane.showMessageDialog(this, "Resposta correta!");
                     showNextQuestion();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Resposta incorreta. Tente novamente.");
                 }
+            }
+        });
+        timer.start();
+
+        // Cores e ícones estilo Kahoot
+        Color[] colors = {
+            new Color(220, 20, 60),    // Vermelho
+            new Color(30, 144, 255),   // Azul
+            new Color(255, 215, 0),    // Amarelo
+            new Color(34, 139, 34)     // Verde
+        };
+        ShapeIcon[] icons = {
+            new ShapeIcon(ShapeIcon.Shape.TRIANGLE, 32, 32, Color.WHITE),
+            new ShapeIcon(ShapeIcon.Shape.DIAMOND, 32, 32, Color.WHITE),
+            new ShapeIcon(ShapeIcon.Shape.CIRCLE, 32, 32, Color.WHITE),
+            new ShapeIcon(ShapeIcon.Shape.SQUARE, 32, 32, Color.WHITE)
+        };
+
+        for (int i = 0; i < options.length; i++) {
+            JButton btn = new JButton("<html><center>" + options[i] + "</center></html>");
+            int answer = i;
+            btn.setPreferredSize(new Dimension(200, 100));
+            btn.setBackground(colors[i]);
+            btn.setForeground(Color.BLACK);
+            btn.setIcon(icons[i]);
+            btn.setFocusPainted(false);
+
+            btn.addActionListener(e -> {
+                timer.stop();
+                long elapsedMillis = System.currentTimeMillis() - startTime;
+                int score = 0;
+                if (q.isCorrect(answer)) {
+                    // Pontuação: 1000 - (tempo gasto em segundos * 1000 / TIME_LIMIT)
+                    score = Math.max(0, 1000 - (int)((elapsedMillis * 1000) / (TIME_LIMIT * 1000)));
+                    JOptionPane.showMessageDialog(this, "Resposta correta!\nPontuação: " + score);
+                    acertos ++;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Resposta incorreta.\nPontuação: 0");
+                }
+                totalScore += score;
+                currentQuestionIndex++;
+                showNextQuestion();
             });
-            questionPanel.add(Box.createVerticalStrut(10));
-            questionPanel.add(btn);
+
+            optionsPanel.add(btn);
         }
+
+        questionPanel.add(Box.createVerticalStrut(20));
+        questionPanel.add(optionsPanel);
 
         questionPanel.revalidate();
         questionPanel.repaint();
     }
 
-    public void finishQuiz(String studentName, String quizName, int correctAnswers, int totalQuestions) {
-        int score = (int) ((double) correctAnswers / totalQuestions * 100); // Calcula a pontuação em porcentagem
-        CrudBD.saveResult(studentName, quizName, score); // Salva o resultado no banco de dados
-        JOptionPane.showMessageDialog(this, "Quiz finalizado! Sua pontuação: " + score + "%");
+    public void finishQuiz(int studentName, String quizName, int totalScore, int totalQuestions) {
+        CrudBD.saveResult(studentName, quizName, totalScore);
+        JOptionPane.showMessageDialog(this, "Quiz finalizado! Sua pontuação: " + totalScore + " de " + (totalQuestions * 100));
     }
 
     private void endQuiz() {
-        int totalQuestions = questions.size(); // Total de perguntas no quiz
-        String quizName = "Quiz Configurado"; // Nome do quiz (pode ser dinâmico)
-        String studentName = user.getName(); // Nome do aluno (recuperado do objeto `User`)
+        int totalQuestions = questions.size();
+        String quizName = "Quiz Configurado";
+        int studentName = user.getUser_id();
 
-        finishQuiz(studentName, quizName, correctAnswers, totalQuestions); // Salva o resultado
-        dispose(); // Fecha a janela do quiz
+        totalScore = totalScore / acertos;
+
+        finishQuiz(studentName, quizName, totalScore, totalQuestions);
+        dispose();
     }
 }

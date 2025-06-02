@@ -1,27 +1,48 @@
 public class User {
-  private String name;
-  private int score;
-  private String senha;
+    private int user_id;
+    private String name;
+    private String senha;
+    private int totalScore;
 
-  public User(String name, String senha) {
-      this.name = name;
-      this.senha = senha;
-      this.score = 0;
-  }
+    public User(int id, String name, String senha) {
+        this.user_id = user_id;
+        this.name = name;
+        this.senha = senha;
+        this.totalScore = 0;
+    }
 
-  public String getName() {
-      return name;
-  }
-  public String getSenha() {
+    // Construtor sem ID, usado para novos usuários
+    public User(String name, String senha) {
+        this.name = name;
+        this.senha = senha;
+        this.totalScore = 0;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int id) {
+        this.user_id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSenha() {
         return senha;
-  }
-  public void setSenha(String senha) {
-      this.senha = senha;
-  }
-  public int getScore() {
-      return score;
-  }
-  public void addScore(int points) {
-      this.score += points;
-  }
+    }
+
+    public int getScore() {
+        return totalScore;
+    }
+
+    public void addScore(int points) {
+        this.totalScore += points;
+    }
+
+    public void setScore(int totalScore) {
+        this.totalScore = totalScore;
+    }
 }

@@ -1,8 +1,6 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.*;
 
 public class GuiEditQuestions extends JFrame {
     private JList<String> questionList;
@@ -16,33 +14,56 @@ public class GuiEditQuestions extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        // Cores e fontes para estilo Windows 11
+        Color fundo = new Color(245, 245, 245);
+        Color botao = new Color(230, 230, 230);
+        Font fonte = new Font("Segoe UI", Font.PLAIN, 15);
+
         // Painel principal
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBackground(fundo);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // Lista de perguntas
         questionListModel = new DefaultListModel<>();
         questionList = new JList<>(questionListModel);
-        JScrollPane scrollPane = new JScrollPane(questionList);
+        questionList.setFont(fonte);
+        questionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        questionList.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
 
-        // Botões
+        JScrollPane scrollPane = new JScrollPane(questionList);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Perguntas Cadastradas"));
+
+        // Painel de botões
         addButton = new JButton("Adicionar");
         editButton = new JButton("Alterar");
         removeButton = new JButton("Remover");
 
-        JPanel buttonPanel = new JPanel();
+        JButton[] botoes = { addButton, editButton, removeButton };
+        for (JButton btn : botoes) {
+            btn.setFont(fonte);
+            btn.setBackground(botao);
+            btn.setFocusPainted(false);
+            btn.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                    BorderFactory.createEmptyBorder(8, 15, 8, 15)));
+        }
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setBackground(fundo);
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buttonPanel.add(removeButton);
 
+        // Montagem
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
 
-        // Carrega as perguntas do banco de dados
+        // Dados e ações
         loadQuestions();
 
-        // Listeners
         addButton.addActionListener(e -> addQuestion());
         editButton.addActionListener(e -> editQuestion());
         removeButton.addActionListener(e -> removeQuestion());
@@ -51,7 +72,7 @@ public class GuiEditQuestions extends JFrame {
     }
 
     private void loadQuestions() {
-        questions = CrudBD.getQuestions(); // Recupera as perguntas do banco de dados
+        questions = CrudBD.getQuestions();
         questionListModel.clear();
         for (Question question : questions) {
             questionListModel.addElement(question.getQuestion());
@@ -62,8 +83,8 @@ public class GuiEditQuestions extends JFrame {
         QuestionForm form = new QuestionForm(this, null);
         Question newQuestion = form.getQuestion();
         if (newQuestion != null) {
-            CrudBD.addQuestion(newQuestion); // Adiciona a nova pergunta ao banco de dados
-            loadQuestions(); // Recarrega a lista de perguntas
+            CrudBD.addQuestion(newQuestion);
+            loadQuestions();
         }
     }
 
@@ -78,8 +99,8 @@ public class GuiEditQuestions extends JFrame {
         QuestionForm form = new QuestionForm(this, selectedQuestion);
         Question updatedQuestion = form.getQuestion();
         if (updatedQuestion != null) {
-            CrudBD.updateQuestion(updatedQuestion); // Atualiza a pergunta no banco de dados
-            loadQuestions(); // Recarrega a lista de perguntas
+            CrudBD.updateQuestion(updatedQuestion);
+            loadQuestions();
         }
     }
 
@@ -93,8 +114,8 @@ public class GuiEditQuestions extends JFrame {
         Question selectedQuestion = questions.get(selectedIndex);
         int confirm = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja remover esta pergunta?", "Confirmar Remoção", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            CrudBD.removeQuestion(selectedQuestion); // Remove a pergunta do banco de dados
-            loadQuestions(); // Recarrega a lista de perguntas
+            CrudBD.removeQuestion(selectedQuestion);
+            loadQuestions();
         }
     }
 
