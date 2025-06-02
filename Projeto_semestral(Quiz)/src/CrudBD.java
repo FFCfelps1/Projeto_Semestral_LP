@@ -15,9 +15,10 @@ public class CrudBD {
             // Gera um ID aleatório entre 1 a 100
             // Garante que o ID seja único
             // (Pega todos os IDs existentes e verifica se o novo ID já está em uso)
-            while (true) {
+            int attempts = 0;
+            while (attempts < 100) {
                 boolean idExists = false;
-                int randomId = (int)(Math.random() * 100) + 1;
+                int randomId = (int)(Math.random() * 90000) + 10000;
 
                 // Verifica se o ID já existe
                 String checkSql = "SELECT COUNT(*) FROM users WHERE user_id = ?";
@@ -33,6 +34,11 @@ public class CrudBD {
                     user.setUser_id(randomId);
                     break; // ID único encontrado
                 }
+                attempts++;
+            }
+
+            if (attempts == 100) {
+                throw new RuntimeException("Não foi possível gerar um ID único após 100 tentativas.");
             }
 
             stmt.setInt(1, user.getUser_id());
@@ -52,21 +58,23 @@ public class CrudBD {
         String sql = "SELECT * FROM users WHERE name = ? AND senha = ?";
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+    
             stmt.setString(1, name);
             stmt.setString(2, senha);
             ResultSet rs = stmt.executeQuery();
-
+    
             if (rs.next()) {
+                // Recupera todos os dados do usuário, incluindo o user_id
                 User user = new User(rs.getString("name"), rs.getString("senha"));
-                user.addScore(rs.getInt("score"));
+                user.setUser_id(rs.getInt("user_id")); // Adiciona o user_id ao objeto User
+                user.addScore(rs.getInt("totalScore")); // Adiciona a pontuação total
                 return user;
             }
-
+    
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null; // Retorna null se o usuário não for encontrado
     }
 
     // Método getUser apenas pelo nome
@@ -118,6 +126,7 @@ public class CrudBD {
         }
         return questions;
     }
+    
     public static void addQuestion(Question question) {
         String sql = "INSERT INTO questions (question, optionA, optionB, optionC, optionD, correctOption) VALUES (?, ?, ?, ?, ?, ?)";
 
