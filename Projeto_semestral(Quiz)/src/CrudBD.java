@@ -82,14 +82,19 @@ public class CrudBD {
         String sql = "SELECT * FROM users WHERE name = ?";
         try (Connection conn = ConnFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+        
+                System.out.println("Executando consulta: " + sql);
+                System.out.println("Parâmetro: name=" + name);
             stmt.setString(1, name);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                System.out.println("Usuário encontrado no banco de dados.");
                 User user = new User(rs.getString("name"), rs.getString("senha"));
-                user.addScore(rs.getInt("score"));
+                user.addScore(rs.getInt("totalScore"));
                 return user;
+            } else {
+                System.out.println("Nenhum usuário encontrado com o nome fornecido.");
             }
 
         } catch (SQLException e) {
