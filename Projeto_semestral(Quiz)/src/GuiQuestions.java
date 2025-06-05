@@ -145,19 +145,18 @@ public class GuiQuestions extends JFrame {
         questionPanel.repaint();
     }
 
-    public void finishQuiz(int studentName, String quizName, int totalScore, int totalQuestions) {
+    public void finishQuiz(int studentName, String quizName, int totalScore) {
         CrudBD.saveResult(studentName, quizName, totalScore);
-        JOptionPane.showMessageDialog(this, "Quiz finalizado! Sua pontuação: " + totalScore + " de " + (totalQuestions * 100));
+        JOptionPane.showMessageDialog(this, "Quiz finalizado! Sua pontuação: " + totalScore + " de 1000 ");
     }
 
     private void endQuiz() {
-        int totalQuestions = questions.size();
         String quizName = "Quiz Configurado";
         int studentName = user.getUser_id();
 
         totalScore = totalScore / acertos;
 
-        finishQuiz(studentName, quizName, totalScore, totalQuestions);
+        finishQuiz(studentName, quizName, totalScore);
         dispose();
     }
 }
